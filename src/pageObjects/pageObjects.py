@@ -2,7 +2,9 @@
 import os
 import urlparse
 from selenium.webdriver import DesiredCapabilities, Remote, ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
+import time
 
 __author__ = 'My'
 
@@ -44,7 +46,6 @@ class PageObject():
         title_element = '//input[@name="title"]'
         short_text_element = '//*[@id="content"]/div/div[1]/form/div/div[3]/div[6]/div[1]/div/div/div/div[3]/pre'
         main_text_element = '//*[@id="content"]/div/div[1]/form/div/div[6]/div[6]/div[1]/div/div/div/div[3]/pre'
-        create_button_element = '//button[contains(text(),"Создать")]'
 
         self.driver.find_element_by_class_name('chzn-single').click()
         self.driver.find_element_by_xpath(option_blog_select_element.format(blog_name)).click()
@@ -53,8 +54,10 @@ class PageObject():
         ActionChains(self.driver).send_keys(short_text).perform()
         self.driver.find_element_by_xpath(main_text_element).click()
         ActionChains(self.driver).send_keys(main_text).perform()
-        self.driver.find_element_by_xpath(create_button_element).submit()
 
+    def save_new_topic(self):
+        create_button_element = '//button[contains(text(),"Создать")]'
+        self.driver.find_element_by_xpath(create_button_element).submit()
 
     def get_topic_title(self):
         title_element = '//*[@class="topic-title"]/a'
@@ -77,6 +80,59 @@ class PageObject():
     def message_error(self):
         error = self.driver.find_element_by_class_name('system-message-error')
         return error.is_displayed()
+
+    def read_short_message(self):
+        short_text_element = '//*[@id="content"]/div/div[1]/form/div/div[3]/div[6]/div[1]/div/div/div/div[3]'
+        return self.driver.find_element_by_xpath(short_text_element).text
+
+    def read_main_message(self):
+        main_text_element = '//*[@id="content"]/div/div[1]/form/div/div[6]/div[6]/div[1]/div/div/div/div[3]'
+        return self.driver.find_element_by_xpath(main_text_element).text
+
+    def make_short_text_bold(self):
+        short_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[1]'
+        self.driver.find_element_by_xpath(short_text_bold_element).click()
+
+    def make_main_text_bold(self):
+        main_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[1]'
+        self.driver.find_element_by_xpath(main_text_bold_element).click()
+
+    def make_short_text_italic(self):
+        short_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[2]'
+        self.driver.find_element_by_xpath(short_text_bold_element).click()
+
+    def make_main_text_italic(self):
+        main_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[2]'
+        self.driver.find_element_by_xpath(main_text_bold_element).click()
+
+    def make_short_text_unordered_list(self):
+        short_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[4]'
+        self.driver.find_element_by_xpath(short_text_bold_element).click()
+        ActionChains(self.driver).send_keys('test').perform()
+        ActionChains(self.driver).send_keys(Keys.ENTER).perform()
+
+    def make_main_text_unordered_list(self):
+        main_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[4]'
+        self.driver.find_element_by_xpath(main_text_bold_element).click()
+        ActionChains(self.driver).send_keys('test').perform()
+        ActionChains(self.driver).send_keys(Keys.ENTER).perform()
+
+    def make_short_text_ordered_list(self):
+        short_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[5]'
+        self.driver.find_element_by_xpath(short_text_bold_element).click()
+        ActionChains(self.driver).send_keys('test').perform()
+        ActionChains(self.driver).send_keys(Keys.ENTER).perform()
+
+    def make_main_text_ordered_list(self):
+        main_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[5]'
+        self.driver.find_element_by_xpath(main_text_bold_element).click()
+        ActionChains(self.driver).send_keys('test').perform()
+        ActionChains(self.driver).send_keys(Keys.ENTER).perform()
+
+
+
+
+
 
 
 
