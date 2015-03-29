@@ -1,128 +1,82 @@
 # coding=utf-8
+import os
 import urlparse
+from selenium.webdriver import DesiredCapabilities, Remote, ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 
 __author__ = 'My'
 
-class Page(object):
-    BASE_URL = 'http://ftest.stud.tech-mail.ru/'
-    PATH = ''
+PASSWORD = 'Pa$$w0rD-17'  # TODO
 
-    def __init__(self, driver):
-        self.driver = driver
+class PageObject():
+    def __init__(self):
+        browser = os.environ.get('TTHA2BROWSER', 'CHROME')
 
-    def open(self):
-        url = urlparse.urljoin(self.BASE_URL, self.PATH)
+        self.driver = Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities=getattr(DesiredCapabilities, browser).copy())
+
+    def close_driver(self):
+        self.driver.quit()
+
+    def open_page(self, base_url, path):
+        url = urlparse.urljoin(base_url, path)
         self.driver.get(url)
         self.driver.maximize_window()
 
+    def authorization(self, login):
+        login_element = '//input[@name="login"]'
+        password_element = '//input[@name="password"]'
+        submit_element = '//span[text()="Войти"]'
+        login_button_element = '//a[text()="Вход для участников"]'
+        username_element = '//a[@class="username"]'
 
-class Component(object):
-    def __init__(self, driver):
-        self.driver = driver
+        self.driver.find_element_by_xpath(login_button_element).click()
+        self.driver.find_element_by_xpath(login_element).send_keys(login)
+        self.driver.find_element_by_xpath(password_element).send_keys(PASSWORD)
+        self.driver.find_element_by_xpath(submit_element).click()
 
-class AuthPage(Page):
-    PATH = ''
-
-    @property
-    def form(self):
-        return AuthForm(self.driver)
-
-    @property
-    def top_menu(self):
-        return TopMenu(self.driver)
-
-class TopMenu(Component):
-    USERNAME = '//a[@class="username"]'
-
-    def get_username(self):
         return WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.USERNAME).text
-        )
+            lambda d: d.find_element_by_xpath(username_element).text)
 
-class CreatePage(Page):
-    PATH = '/blog/topic/create/'
+    def create_simple_topic(self, blog_name, title, short_text, main_text):
+        option_blog_select_element = '//li[text()="{}"]'
+        title_element = '//input[@name="title"]'
+        short_text_element = '//*[@id="content"]/div/div[1]/form/div/div[3]/div[6]/div[1]/div/div/div/div[3]/pre'
+        main_text_element = '//*[@id="content"]/div/div[1]/form/div/div[6]/div[6]/div[1]/div/div/div/div[3]/pre'
+        create_button_element = '//button[contains(text(),"Создать")]'
 
-    @property
-    def form(self):
-        return CreateForm(self.driver)
-
-class TopicPage(Page):
-    @property
-    def topic(self):
-        return Topic(self.driver)
-
-class BlogPage(Page):
-    @property
-    def topic(self):
-        return Topic(self.driver)
+        self.driver.find_element_by_class_name('chzn-single').click()
+        self.driver.find_element_by_xpath(option_blog_select_element.format(blog_name)).click()
+        self.driver.find_element_by_xpath(title_element).send_keys(title)
+        self.driver.find_element_by_xpath(short_text_element).click()
+        ActionChains(self.driver).send_keys(short_text).perform()
+        self.driver.find_element_by_xpath(main_text_element).click()
+        ActionChains(self.driver).send_keys(main_text).perform()
+        self.driver.find_element_by_xpath(create_button_element).submit()
 
 
-class AuthForm(Component):
-    LOGIN = '//input[@name="login"]'
-    PASSWORD = '//input[@name="password"]'
-    SUBMIT = '//span[text()="Войти"]'
-    LOGIN_BUTTON = '//a[text()="Вход для участников"]'
-
-    def open_form(self):
-        self.driver.find_element_by_xpath(self.LOGIN_BUTTON).click()
-
-    def set_login(self, login):
-        self.driver.find_element_by_xpath(self.LOGIN).send_keys(login)
-
-    def set_password(self, pwd):
-        self.driver.find_element_by_xpath(self.PASSWORD).send_keys(pwd)
-
-    def submit(self):
-        self.driver.find_element_by_xpath(self.SUBMIT).click()
-
-class CreateForm(Component):
-    BLOGSELECT = '//a[@class="chzn-single"]'
-    OPTION = '//li[text()="{}"]'
-    TITLE = '//input[@name="title"]'
-    SHORT_TEXT = '//textarea[@name="text_short"]'
-    MAIN_TEXT = '//textarea[@id="id_text"]'
-    CREATE_BUTTON = '//button[contains(text(),"Создать")]'
-
-    def blog_select_open(self):
-        self.driver.find_element_by_xpath(self.BLOGSELECT).click()
-
-    def blog_select_set_option(self, option_text):
-        self.driver.find_element_by_xpath(self.OPTION.format(option_text)).click()
-
-    def set_title(self,title):
-        self.driver.find_element_by_xpath(self.TITLE).send_keys(title)
-
-    def set_short_text(self,short_text):
-        self.driver.find_element_by_xpath(self.SHORT_TEXT).send_keys(short_text)
-
-    def set_main_text(self,main_text):
-        self.driver.find_element_by_xpath(self.MAIN_TEXT).send_keys(main_text)
-
-    def submit(self):
-        self.driver.find_element_by_xpath(self.CREATE_BUTTON).click()
-
-class Topic(Component):
-    TITLE = '//*[@class="topic-title"]/a'
-    TEXT = '//*[@class="topic-content text"]/p'
-    BLOG = '//*[@class="topic-blog"]'
-    DELETE_BUTTON = '//a[@class="actions-delete"]'
-    DELETE_BUTTON_CONFIRM = '//input[@value="Удалить"]'
-
-    def get_title(self):
+    def get_topic_title(self):
+        title_element = '//*[@class="topic-title"]/a'
         return WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.TITLE).text
-        )
+            lambda d: d.find_element_by_xpath(title_element).text)
 
-    def get_text(self):
+    def get_topic_text(self):
+        short_text_element = '//*[@class="topic-content text"]/p'
         return WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.TEXT).text
-        )
+            lambda d: d.find_element_by_xpath(short_text_element).text)
 
-    def open_blog(self):
-        self.driver.find_element_by_xpath(self.BLOG).click()
+    def open_blog_page(self):
+        self.driver.find_element_by_class_name('topic-blog').click()
 
-    def delete(self):
-        self.driver.find_element_by_xpath(self.DELETE_BUTTON).click()
-        self.driver.find_element_by_xpath(self.DELETE_BUTTON_CONFIRM).click()
+    def delete_topic(self):
+        delete_button_confirm_element = '//input[@value="Удалить"]'
+        self.driver.find_element_by_class_name('actions-delete').click()
+        self.driver.find_element_by_xpath(delete_button_confirm_element).click()
+
+    def message_error(self):
+        error = self.driver.find_element_by_class_name('system-message-error')
+        return error.is_displayed()
+
+
 

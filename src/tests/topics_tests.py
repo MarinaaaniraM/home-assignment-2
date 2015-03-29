@@ -1,76 +1,55 @@
 # coding=utf-8
 
-import os
 import unittest
-from pageObjects import pageObjects
-from selenium.webdriver import Remote, DesiredCapabilities
+from pageObjects.pageObjects import PageObject
 
 __author__ = 'My'
+
+BASE_URL = 'http://ftest.stud.tech-mail.ru/'
+
+LOGIN = 'ftest17@tech-mail.ru'
+USER_NAME = u'Господин Прокурор'
+
+BLOG = 'Флудилка'
+TITLE = u'Title'
+SHORT_TEXT = u'ShortText'
+MAIN_TEXT = u'MainText'
 
 
 class TopicTest(unittest.TestCase):
 
     def setUp(self):
-        browser = os.environ.get('TTHA2BROWSER', 'CHROME')
+        self.page_obj = PageObject()
+        self.page_obj.open_page(BASE_URL, '')
+        self.assertEqual(self.page_obj.authorization(LOGIN), USER_NAME)
 
-        self.driver = Remote(
-            command_executor='http://127.0.0.1:4444/wd/hub',
-            desired_capabilities=getattr(DesiredCapabilities, browser).copy()
-        )
-
-        USERNAME = u'Господин Прокурор'
-        USEREMAIL = 'ftest17@tech-mail.ru'
-        PASSWORD = 'Pa$$w0rD-17'
-
-        auth_page = pageObjects.AuthPage(self.driver)
-        auth_page.open()
-
-        auth_form = auth_page.form
-        auth_form.open_form()
-        auth_form.set_login(USEREMAIL)
-        auth_form.set_password(PASSWORD)
-        auth_form.submit()
-
-        user_name = auth_page.top_menu.get_username()
-        self.assertEqual(USERNAME, user_name)
-
+        self.page_obj.open_page(BASE_URL, '/blog/topic/create/')
 
     def tearDown(self):
-        self.driver.quit()
+        self.page_obj.close_driver()
 
     def testCreateSimpleTopic(self):
-        BLOG = 'Флудилка'
-        TITLE = u'Господин Прокурор написал: Заголовок топика111'
-        SHORT_TEXT = u'Господин Прокурор написал: Короткий текст, отображается в блогах!111'
-        MAIN_TEXT = u'Господин Прокурор написал: Главный текст, Отображается внутри топика!111'
+        self.page_obj.create_simple_topic(BLOG, TITLE, SHORT_TEXT, MAIN_TEXT)
 
-        create_page = pageObjects.CreatePage(self.driver)
-        create_page.open()
+        self.assertEqual(self.page_obj.get_topic_title(), TITLE)
+        self.assertEqual(self.page_obj.get_topic_text(), MAIN_TEXT)
 
-        create_form = create_page.form
-        create_form.blog_select_open()
-        create_form.blog_select_set_option(BLOG)
-        create_form.set_title(TITLE)
-        create_form.set_short_text(SHORT_TEXT)
-        create_form.set_main_text(MAIN_TEXT)
-        create_form.submit()
+        self.page_obj.open_blog_page()
+        self.assertEqual(self.page_obj.get_topic_title(), TITLE)
+        self.assertEqual(self.page_obj.get_topic_text(), SHORT_TEXT)
 
-        topic_page = pageObjects.TopicPage(self.driver)
-        topic_title = topic_page.topic.get_title()
-        topic_text = topic_page.topic.get_text()
-        self.assertEqual(TITLE, topic_title)
-        self.assertEqual(MAIN_TEXT, topic_text)
+        self.page_obj.delete_topic()
 
-        topic_page.topic.open_blog()
+    def testCreateTopicWithoutTitle(self):
+        self.page_obj.create_simple_topic(BLOG, '', SHORT_TEXT, MAIN_TEXT)
+        self.assertTrue(self.page_obj.message_error())
 
-        blog_page = pageObjects.BlogPage(self.driver)
-        topic_title = blog_page.topic.get_title()
-        topic_text = blog_page.topic.get_text()
-        self.assertEqual(TITLE, topic_title)
-        self.assertEqual(SHORT_TEXT, topic_text)
+    def testCreateTopicWithoutShortText(self):
+        self.page_obj.create_simple_topic(BLOG, '', SHORT_TEXT, MAIN_TEXT)
+        self.assertTrue(self.page_obj.message_error())
 
-        blog_page.topic.delete()
-        topic_title = blog_page.topic.get_title()
-        topic_text = blog_page.topic.get_text()
-        self.assertNotEqual(TITLE, topic_title)
-        self.assertNotEqual(SHORT_TEXT, topic_text)
+    def testCreateTopicWithoutMainText(self):
+        self.page_obj.create_simple_topic(BLOG, '', SHORT_TEXT, MAIN_TEXT)
+        self.assertTrue(self.page_obj.message_error())
+
+
