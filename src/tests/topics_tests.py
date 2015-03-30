@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import unittest
-import time
 from pageObjects.pageObjects import PageObject
 
 __author__ = 'My'
@@ -15,7 +14,11 @@ BLOG = 'Флудилка'
 TITLE = u'Title'
 SHORT_TEXT = u'ShortText'
 MAIN_TEXT = u'MainText'
-
+UNORDERED_LIST = '* test\ntest'
+ORDERED_LIST = '1. test\ntest'
+IMAGE_FROM_NET = '![](http://megafun.name/images/articles/sereznye-koshki-6-foto_1.jpg)'
+YANDEX_LINK = '[testing_link](http://ya.ru)'
+USER_PROFILE_LINK = u'[Господин Губернатор](/profile/g.gubernator/)'
 
 class TopicTest(unittest.TestCase):
 
@@ -130,12 +133,12 @@ class TopicTest(unittest.TestCase):
     def testShortUserLinkMarkdown(self):
         self.page_obj.create_simple_topic(BLOG, TITLE, '', '')
         self.page_obj.make_short_user_link(u'Губернатор')
-        self.assertEqual(self.page_obj.read_short_message(), u'[Господин Губернатор](/profile/g.gubernator/)')
+        self.assertEqual(self.page_obj.read_short_message(), USER_PROFILE_LINK)
 
     def testMainUserLinkMarkdown(self):
         self.page_obj.create_simple_topic(BLOG, TITLE, '', '')
         self.page_obj.make_main_user_link(u'Губернатор')
-        self.assertEqual(self.page_obj.read_main_message(), u'[Господин Губернатор](/profile/g.gubernator/)')
+        self.assertEqual(self.page_obj.read_main_message(), USER_PROFILE_LINK)
 
     def testCreateTopicWithoutComment(self):
         self.page_obj.create_simple_topic(BLOG, TITLE, SHORT_TEXT, MAIN_TEXT)
@@ -157,7 +160,6 @@ class TopicTest(unittest.TestCase):
         self.page_obj.open_page(BASE_URL, '/blog/topics/draft/')
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
         self.assertEqual(self.page_obj.get_topic_text(), SHORT_TEXT)
-
         self.page_obj.delete_topic()
 
     def testCreateTopicWithBoldText(self):
@@ -191,7 +193,7 @@ class TopicTest(unittest.TestCase):
         self.page_obj.delete_topic()
 
     def testCreateTopicWithUnorderedList(self):
-        self.page_obj.create_simple_topic(BLOG, TITLE, '* test\ntest', '* test\ntest')
+        self.page_obj.create_simple_topic(BLOG, TITLE, UNORDERED_LIST, UNORDERED_LIST)
         self.page_obj.save_new_topic()
 
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
@@ -204,7 +206,7 @@ class TopicTest(unittest.TestCase):
         self.page_obj.delete_topic()
 
     def testCreateTopicWithOrderedList(self):
-        self.page_obj.create_simple_topic(BLOG, TITLE, '1. test\ntest', '1. test\ntest')
+        self.page_obj.create_simple_topic(BLOG, TITLE, ORDERED_LIST, ORDERED_LIST)
         self.page_obj.save_new_topic()
 
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
@@ -217,26 +219,20 @@ class TopicTest(unittest.TestCase):
         self.page_obj.delete_topic()
 
     def testCreateTopicWithLink(self):
-        self.page_obj.create_simple_topic(BLOG,
-                                          TITLE,
-                                          '[' + SHORT_TEXT + '](http://ya.ru)',
-                                          '[' + MAIN_TEXT + '](http://google.com)')
+        self.page_obj.create_simple_topic(BLOG, TITLE, YANDEX_LINK, YANDEX_LINK)
         self.page_obj.save_new_topic()
 
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
-        self.assertTrue(self.page_obj.is_link_main_text())
+        self.assertTrue(self.page_obj.is_link_text())
 
         self.page_obj.open_blog_page()
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
-        self.assertTrue(self.page_obj.is_link_short_text())
+        self.assertTrue(self.page_obj.is_link_text())
 
         self.page_obj.delete_topic()
 
     def testCreateTopicWithImage(self):
-        self.page_obj.create_simple_topic(BLOG,
-                                          TITLE,
-                                          '![](http://megafun.name/images/articles/sereznye-koshki-6-foto_1.jpg)',
-                                          '![](http://megafun.name/images/articles/sereznye-koshki-6-foto_1.jpg)')
+        self.page_obj.create_simple_topic(BLOG, TITLE, IMAGE_FROM_NET, IMAGE_FROM_NET)
         self.page_obj.save_new_topic()
 
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
@@ -249,18 +245,15 @@ class TopicTest(unittest.TestCase):
         self.page_obj.delete_topic()
 
     def testCreateTopicWithUserLink(self):
-        self.page_obj.create_simple_topic(BLOG,
-                                          TITLE,
-                                          u'[Господин Губернатор](/profile/g.gubernator/)',
-                                          u'[Господин Губернатор](/profile/g.gubernator/)')
+        self.page_obj.create_simple_topic(BLOG, TITLE, USER_PROFILE_LINK, USER_PROFILE_LINK)
         self.page_obj.save_new_topic()
 
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
-        self.assertTrue(self.page_obj.is_user_link_main_text())
+        self.assertTrue(self.page_obj.is_user_link_text())
 
         self.page_obj.open_blog_page()
         self.assertEqual(self.page_obj.get_topic_title(), TITLE)
-        self.assertTrue(self.page_obj.is_user_link_short_text())
+        self.assertTrue(self.page_obj.is_user_link_text())
 
         self.page_obj.delete_topic()
 

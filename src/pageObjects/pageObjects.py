@@ -9,7 +9,7 @@ import time
 
 __author__ = 'My'
 
-PASSWORD = 'Pa$$w0rD-17'  # TODO
+PASSWORD = os.environ['TTHA2PASSWORD']
 
 class PageObject():
     def __init__(self):
@@ -258,17 +258,9 @@ class PageObject():
         except NoSuchElementException:
             return False
 
-    def is_link_short_text(self):
-        short_text_link_element = '//a[@href="http://ya.ru"]'
+    def is_link_text(self):
         try:
-            return self.driver.find_element_by_xpath(short_text_link_element).is_displayed()
-        except NoSuchElementException:
-            return False
-
-    def is_link_main_text(self):
-        main_text_link_element = '//a[@href="http://google.com"]'
-        try:
-            return self.driver.find_element_by_xpath(main_text_link_element).is_displayed()
+            return self.driver.find_element_by_link_text('testing_link').is_displayed()
         except NoSuchElementException:
             return False
 
@@ -286,19 +278,12 @@ class PageObject():
         except NoSuchElementException:
             return False
 
-    def is_user_link_short_text(self):
-        short_text_user_link_element = '//*[@id="content"]/div/div[1]/article[1]/div/div/p/a'
+    def is_user_link_text(self):
         try:
-            return self.driver.find_element_by_xpath(short_text_user_link_element).is_displayed()
+            return self.driver.find_element_by_link_text(u'Господин Губернатор').is_displayed()
         except NoSuchElementException:
             return False
 
-    def is_user_link_main_text(self):
-        main_text_user_link_element = '//*[@id="content"]/div/div[1]/article/div/div/p/a'
-        try:
-            return self.driver.find_element_by_xpath(main_text_user_link_element).is_displayed()
-        except NoSuchElementException:
-            return False
 
 
 
