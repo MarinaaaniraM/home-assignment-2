@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import unittest
-from pageObjects.pageObjects import PageObject
+from src.pageObjects.pageObjects import PageObject
 
 __author__ = 'My'
 
@@ -64,7 +64,7 @@ class TopicTest(unittest.TestCase):
         self.page_obj.create_simple_topic(BLOG, TITLE, '', '')
         self.page_obj.make_short_text_bold()
         self.assertEqual(self.page_obj.read_short_message(), '****')
-
+    #
     def testMainTextBoldMarkdown(self):
         self.page_obj.create_simple_topic(BLOG, TITLE, '', '')
         self.page_obj.make_main_text_bold()
@@ -124,7 +124,7 @@ class TopicTest(unittest.TestCase):
         self.page_obj.create_simple_topic(BLOG, TITLE, '', '')
         self.page_obj.make_short_image_upload()
         self.assertIn('.jpg', self.page_obj.read_short_message())
-
+    #
     def testMainImageUploadMarkdown(self):
         self.page_obj.create_simple_topic(BLOG, TITLE, '', '')
         self.page_obj.make_main_image_upload()

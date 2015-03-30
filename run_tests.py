@@ -2,7 +2,7 @@
 
 import sys
 import unittest
-from tests.topics_tests import TopicTest
+from src.tests.topics_tests import TopicTest
 
 
 if __name__ == '__main__':

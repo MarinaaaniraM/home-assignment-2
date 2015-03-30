@@ -3,13 +3,17 @@ import os
 import urlparse
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import DesiredCapabilities, Remote, ActionChains
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 import time
 
 __author__ = 'My'
 
 PASSWORD = os.environ['TTHA2PASSWORD']
+
+LOCAL_PICTURE = '/Users/My/techMailRu/home-assignment-2/cat.jpg'
 
 class PageObject():
     def __init__(self):
@@ -45,8 +49,9 @@ class PageObject():
     def create_simple_topic(self, blog_name, title, short_text, main_text):
         option_blog_select_element = '//li[text()="{}"]'
         title_element = '//input[@name="title"]'
-        short_text_element = '//*[@id="content"]/div/div[1]/form/div/div[3]/div[6]/div[1]/div/div/div/div[3]/pre'
-        main_text_element = '//*[@id="content"]/div/div[1]/form/div/div[6]/div[6]/div[1]/div/div/div/div[3]/pre'
+        short_text_element = '(//div[@class="CodeMirror-code"])[1]'
+
+        main_text_element = '(//div[@class="CodeMirror-code"])[2]'
 
         self.driver.find_element_by_class_name('chzn-single').click()
         self.driver.find_element_by_xpath(option_blog_select_element.format(blog_name)).click()
@@ -82,110 +87,114 @@ class PageObject():
         return self.driver.find_element_by_class_name('system-message-error').is_displayed()
 
     def read_short_message(self):
-        short_text_element = '//*[@id="content"]/div/div[1]/form/div/div[3]/div[6]/div[1]/div/div/div/div[3]'
-        return self.driver.find_element_by_xpath(short_text_element).text
+        short_text_element = '(//div[@class="CodeMirror-code"])[1]'
+        return WebDriverWait(self.driver, 30, 0.1).until(
+            expected_conditions.presence_of_element_located((By.XPATH, short_text_element))).text
 
     def read_main_message(self):
-        main_text_element = '//*[@id="content"]/div/div[1]/form/div/div[6]/div[6]/div[1]/div/div/div/div[3]'
-        return self.driver.find_element_by_xpath(main_text_element).text
+        main_text_element = '(//div[@class="CodeMirror-code"])[2]'
+        return WebDriverWait(self.driver, 30, 0.1).until(
+            expected_conditions.presence_of_element_located((By.XPATH, main_text_element))).text
 
     def make_short_text_bold(self):
-        short_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[1]'
+        short_text_bold_element = '(//a[@class="markdown-editor-icon-bold"])[1]'
         self.driver.find_element_by_xpath(short_text_bold_element).click()
 
     def make_main_text_bold(self):
-        main_text_bold_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[1]'
+        main_text_bold_element = '(//a[@class="markdown-editor-icon-bold"])[2]'
         self.driver.find_element_by_xpath(main_text_bold_element).click()
 
     def make_short_text_italic(self):
-        short_text_italic_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[2]'
+        short_text_italic_element = '(//a[@class="markdown-editor-icon-italic"])[1]'
         self.driver.find_element_by_xpath(short_text_italic_element).click()
 
     def make_main_text_italic(self):
-        main_text_italic_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[2]'
+        main_text_italic_element = '(//a[@class="markdown-editor-icon-italic"])[2]'
         self.driver.find_element_by_xpath(main_text_italic_element).click()
 
     def make_short_text_unordered_list(self):
-        short_text_unordered_list_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[4]'
+        short_text_unordered_list_element = '(//a[@class="markdown-editor-icon-unordered-list"])[1]'
         self.driver.find_element_by_xpath(short_text_unordered_list_element).click()
         ActionChains(self.driver).send_keys('test').perform()
         ActionChains(self.driver).send_keys(Keys.ENTER).perform()
 
     def make_main_text_unordered_list(self):
-        main_text_unordered_list_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[4]'
+        main_text_unordered_list_element = '(//a[@class="markdown-editor-icon-unordered-list"])[2]'
         self.driver.find_element_by_xpath(main_text_unordered_list_element).click()
         ActionChains(self.driver).send_keys('test').perform()
         ActionChains(self.driver).send_keys(Keys.ENTER).perform()
 
     def make_short_text_ordered_list(self):
-        short_text_ordered_list_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[5]'
+        short_text_ordered_list_element = '(//a[@class="markdown-editor-icon-ordered-list"])[1]'
         self.driver.find_element_by_xpath(short_text_ordered_list_element).click()
         ActionChains(self.driver).send_keys('test').perform()
         ActionChains(self.driver).send_keys(Keys.ENTER).perform()
 
     def make_main_text_ordered_list(self):
-        main_text_ordered_list_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[5]'
+        main_text_ordered_list_element = '(//a[@class="markdown-editor-icon-ordered-list"])[2]'
         self.driver.find_element_by_xpath(main_text_ordered_list_element).click()
         ActionChains(self.driver).send_keys('test').perform()
         ActionChains(self.driver).send_keys(Keys.ENTER).perform()
 
     def make_short_text_link(self):
-        short_text_link_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[6]'
+        short_text_link_element = '(//a[@class="markdown-editor-icon-link"])[1]'
         self.driver.find_element_by_xpath(short_text_link_element).click()
         self.driver.switch_to.alert.send_keys('http://web-site.ru')
         self.driver.switch_to.alert.accept()
 
     def make_main_text_link(self):
-        main_text_link_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[6]'
+        main_text_link_element = '(//a[@class="markdown-editor-icon-link"])[3]'
         self.driver.find_element_by_xpath(main_text_link_element).click()
         self.driver.switch_to.alert.send_keys('http://web-site.ru')
         self.driver.switch_to.alert.accept()
 
     def make_short_image_link(self):
-        short_image_link_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[7]'
+        short_image_link_element = '(//a[@class="markdown-editor-icon-image"])[1]'
         self.driver.find_element_by_xpath(short_image_link_element).click()
         self.driver.switch_to.alert.send_keys('http://image.jpg')
         self.driver.switch_to.alert.accept()
 
     def make_main_image_link(self):
-        main_image_link_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[7]'
+        main_image_link_element = '(//a[@class="markdown-editor-icon-image"])[3]'
         self.driver.find_element_by_xpath(main_image_link_element).click()
         self.driver.switch_to.alert.send_keys('http://image.jpg')
         self.driver.switch_to.alert.accept()
 
     def make_short_image_upload(self):
-        self.driver.find_element_by_xpath(
-            '//*[@id="content"]/div/div[1]/form/div/span[1]/input').send_keys(
-            '/Users/My/techMailRu/home-assignment-2/cat.jpg')
-        time.sleep(1)                                                               # TODO WebDriverWait didn't work??
+        short_text_image_upload_element = '(//input[@name="filedata"])[1]'
+        self.driver.find_element_by_xpath(short_text_image_upload_element).send_keys(LOCAL_PICTURE)
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            expected_conditions.presence_of_element_located((By.XPATH, short_text_image_upload_element)))
+        time.sleep(1)       # TODO
 
     def make_main_image_upload(self):
-        self.driver.find_element_by_xpath(
-            '//*[@id="content"]/div/div[1]/form/div/span[2]/input').send_keys(
-            '/Users/My/techMailRu/home-assignment-2/cat.jpg')
-        time.sleep(1)                                                               # TODO WebDriverWait didn't work??
+        main_text_image_upload_element = '(//input[@name="filedata"])[2]'
+        self.driver.find_element_by_xpath(main_text_image_upload_element).send_keys(LOCAL_PICTURE)
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            expected_conditions.presence_of_element_located((By.XPATH, main_text_image_upload_element)))
+        time.sleep(1)       # TODO
 
     def make_short_user_link(self, user_name):
-        short_user_link_element = '//*[@id="content"]/div/div[1]/form/div/div[2]/a[9]'
+        short_user_link_element = '(//a[@class="markdown-editor-icon-link"])[2]'
         self.driver.find_element_by_xpath(short_user_link_element).click()
         find_user_element = '//*[@id="search-user-login-popup"]'
         self.driver.find_element_by_xpath(find_user_element).send_keys(user_name)
-        time.sleep(1)                                                               # TODO WebDriverWait didn't work??
 
         choose_user_element = '//a[text()="Господин Губернатор"]'
-        self.driver.find_element_by_xpath(choose_user_element).click()
-        time.sleep(1)                                                               # TODO WebDriverWait didn't work??
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(choose_user_element)).click()
 
     def make_main_user_link(self, user_name):
-        short_user_link_element = '//*[@id="content"]/div/div[1]/form/div/div[5]/a[9]'
+        short_user_link_element = '(//a[@class="markdown-editor-icon-link"])[4]'
         self.driver.find_element_by_xpath(short_user_link_element).click()
         find_user_element = '//*[@id="search-user-login-popup"]'
         self.driver.find_element_by_xpath(find_user_element).send_keys(user_name)
-        time.sleep(1)                                                               # TODO WebDriverWait didn't work??
 
         choose_user_element = '//a[text()="Господин Губернатор"]'
-        self.driver.find_element_by_xpath(choose_user_element).click()
-        time.sleep(1)                                                               # TODO WebDriverWait didn't work??
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(choose_user_element)).click()
 
     def make_comment_forbidden(self):
         comment_checkbox_element = '//*[@id="id_forbid_comment"]'
@@ -201,58 +210,57 @@ class PageObject():
         comment_checkbox_element = '//*[@id="id_publish"]'
         self.driver.find_element_by_xpath(comment_checkbox_element).click()
 
-
     def is_bold_short_text(self):
-        short_text_bold_element = '//*[@id="content"]/div/div[1]/article[1]/div/div/p/strong'
+        short_text_bold_element = '//*[@class="topic-content text"]/p/strong'
         try:
             return self.driver.find_element_by_xpath(short_text_bold_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_bold_main_text(self):
-        main_text_bold_element = '//*[@id="content"]/div/div[1]/article/div/div/p/strong'
+        main_text_bold_element = '//*[@class="topic-content text"]/p/strong'
         try:
             return self.driver.find_element_by_xpath(main_text_bold_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_italic_short_text(self):
-        short_text_italic_element = '//*[@id="content"]/div/div[1]/article[1]/div/div/p/em'
+        short_text_italic_element = '//*[@class="topic-content text"]/p/em'
         try:
             return self.driver.find_element_by_xpath(short_text_italic_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_italic_main_text(self):
-        main_text_italic_element = '//*[@id="content"]/div/div[1]/article/div/div/p/em'
+        main_text_italic_element = '//*[@class="topic-content text"]/p/em'
         try:
             return self.driver.find_element_by_xpath(main_text_italic_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_unordered_list_short_text(self):
-        short_text_unordered_list_element = '//*[@id="content"]/div/div[1]/article[1]/div/div/ul'
+        short_text_unordered_list_element = '//*[@class="topic-content text"]/ul'
         try:
             return self.driver.find_element_by_xpath(short_text_unordered_list_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_unordered_list_main_text(self):
-        main_text_unordered_list_element = '//*[@id="content"]/div/div[1]/article/div/div/ul'
+        main_text_unordered_list_element = '//*[@class="topic-content text"]/ul'
         try:
             return self.driver.find_element_by_xpath(main_text_unordered_list_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_ordered_list_short_text(self):
-        short_text_ordered_list_element = '//*[@id="content"]/div/div[1]/article[1]/div/div/ol'
+        short_text_ordered_list_element = '//*[@class="topic-content text"]/ol'
         try:
             return self.driver.find_element_by_xpath(short_text_ordered_list_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_ordered_list_main_text(self):
-        main_text_ordered_list_element = '//*[@id="content"]/div/div[1]/article/div/div/ol'
+        main_text_ordered_list_element = '//*[@class="topic-content text"]/ol'
         try:
             return self.driver.find_element_by_xpath(main_text_ordered_list_element).is_displayed()
         except NoSuchElementException:
@@ -265,14 +273,14 @@ class PageObject():
             return False
 
     def is_image_short_text(self):
-        short_text_image_element = '//*[@id="content"]/div/div[1]/article[1]/div/div/p/img'
+        short_text_image_element = '//*[@class="topic-content text"]/p/img'
         try:
             return self.driver.find_element_by_xpath(short_text_image_element).is_displayed()
         except NoSuchElementException:
             return False
 
     def is_image_main_text(self):
-        main_text_image_element = '//*[@id="content"]/div/div[1]/article/div/div/p/img'
+        main_text_image_element = '//*[@class="topic-content text"]/p/img'
         try:
             return self.driver.find_element_by_xpath(main_text_image_element).is_displayed()
         except NoSuchElementException:
