@@ -7,13 +7,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-import time
 
 __author__ = 'My'
 
-PASSWORD = os.environ['TTHA2PASSWORD']
+PASSWORD = 'Pa$$w0rD-17'
+# PASSWORD = os.environ['TTHA2PASSWORD']
 
-LOCAL_PICTURE = '/Users/My/techMailRu/home-assignment-2/cat.jpg'
+dir = os.path.dirname(__file__)
+filename = os.path.join(dir, '../../cat.jpg')
+LOCAL_PICTURE = os.path.join(dir, '../../cat.jpg')
+
 
 class PageObject():
     def __init__(self):
@@ -162,19 +165,19 @@ class PageObject():
 
     def make_short_image_upload(self):
         short_text_image_upload_element = '(//input[@name="filedata"])[1]'
+        short_text_image_upload_contains_text = '//div[@class="CodeMirror-code" and contains(., ".jpg")]'
         self.driver.find_element_by_xpath(short_text_image_upload_element).send_keys(LOCAL_PICTURE)
 
         WebDriverWait(self.driver, 30, 0.1).until(
-            expected_conditions.presence_of_element_located((By.XPATH, short_text_image_upload_element)))
-        time.sleep(1)       # TODO
+            expected_conditions.presence_of_element_located((By.XPATH, short_text_image_upload_contains_text)))
 
     def make_main_image_upload(self):
         main_text_image_upload_element = '(//input[@name="filedata"])[2]'
+        main_text_image_upload_contains_text = '//div[@class="CodeMirror-code" and contains(., ".jpg")]'
         self.driver.find_element_by_xpath(main_text_image_upload_element).send_keys(LOCAL_PICTURE)
 
         WebDriverWait(self.driver, 30, 0.1).until(
-            expected_conditions.presence_of_element_located((By.XPATH, main_text_image_upload_element)))
-        time.sleep(1)       # TODO
+            expected_conditions.presence_of_element_located((By.XPATH, main_text_image_upload_contains_text)))
 
     def make_short_user_link(self, user_name):
         short_user_link_element = '(//a[@class="markdown-editor-icon-link"])[2]'

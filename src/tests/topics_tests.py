@@ -16,7 +16,7 @@ SHORT_TEXT = u'ShortText'
 MAIN_TEXT = u'MainText'
 UNORDERED_LIST = '* test\ntest'
 ORDERED_LIST = '1. test\ntest'
-IMAGE_FROM_NET = '![](http://megafun.name/images/articles/sereznye-koshki-6-foto_1.jpg)'
+IMAGE_FROM_NET = '![](http://cs623931.vk.me/v623931813/28090/WKOjpQKmKC4.jpg)'
 YANDEX_LINK = '[testing_link](http://ya.ru)'
 USER_PROFILE_LINK = u'[Господин Губернатор](/profile/g.gubernator/)'
 
