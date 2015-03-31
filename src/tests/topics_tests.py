@@ -145,7 +145,7 @@ class TopicTest(unittest.TestCase):
         self.page_obj.make_comment_forbidden()
         self.page_obj.save_new_topic()
 
-        self.assertTrue(not self.page_obj.is_comment_available())
+        self.assertFalse(self.page_obj.is_comment_available())
         self.page_obj.delete_topic()
 
     def testCreateTopicWithoutPublishing(self):

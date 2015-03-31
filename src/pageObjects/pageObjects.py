@@ -10,8 +10,7 @@ from selenium.webdriver.support import expected_conditions
 
 __author__ = 'My'
 
-PASSWORD = 'Pa$$w0rD-17'
-# PASSWORD = os.environ['TTHA2PASSWORD']
+PASSWORD = os.environ['TTHA2PASSWORD']
 
 dir = os.path.dirname(__file__)
 filename = os.path.join(dir, '../../cat.jpg')
