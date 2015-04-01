@@ -19,7 +19,7 @@ LOCAL_PICTURE = os.path.join(dir, '../../cat.jpg')
 
 class PageObject():
     def __init__(self):
-        browser = os.environ.get('TTHA2BROWSER', 'FIREFOX')
+        browser = os.environ.get('TTHA2BROWSER', 'CHROME')
 
         self.driver = Remote(
             command_executor='http://localhost:4444/wd/hub',
