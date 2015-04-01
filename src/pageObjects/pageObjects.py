@@ -19,7 +19,7 @@ LOCAL_PICTURE = os.path.join(dir, '../../cat.jpg')
 
 class PageObject():
     def __init__(self):
-        browser = os.environ.get('TTHA2BROWSER', 'CHROME')
+        browser = os.environ.get('TTHA2BROWSER', 'FIREFOX')
 
         self.driver = Remote(
             command_executor='http://localhost:4444/wd/hub',
@@ -163,6 +163,7 @@ class PageObject():
         self.driver.switch_to.alert.accept()
 
     def make_short_image_upload(self):
+        self.driver.execute_script('$(".markdown-upload-photo-container").show()')
         short_text_image_upload_element = '(//input[@name="filedata"])[1]'
         short_text_image_upload_contains_text = '//div[@class="CodeMirror-code" and contains(., ".jpg")]'
         self.driver.find_element_by_xpath(short_text_image_upload_element).send_keys(LOCAL_PICTURE)
@@ -171,6 +172,7 @@ class PageObject():
             expected_conditions.presence_of_element_located((By.XPATH, short_text_image_upload_contains_text)))
 
     def make_main_image_upload(self):
+        self.driver.execute_script('$(".markdown-upload-photo-container").show()')
         main_text_image_upload_element = '(//input[@name="filedata"])[2]'
         main_text_image_upload_contains_text = '//div[@class="CodeMirror-code" and contains(., ".jpg")]'
         self.driver.find_element_by_xpath(main_text_image_upload_element).send_keys(LOCAL_PICTURE)
